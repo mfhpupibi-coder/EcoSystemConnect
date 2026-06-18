@@ -1,14 +1,12 @@
---
-== == == == == == == == == == == == == == == == == == == == == == == == == == == == == == = -- HITO 2: SCRIPT DE CREACIÓN DE BASE DE DATOS - ECOSYSTEM CONNECT
--- =============================================================
--- 1. Tabla de Categorías (independiente)
+DROP TABLE IF EXISTS Productos CASCADE;
+DROP TABLE IF EXISTS Usuarios CASCADE;
+DROP TABLE IF EXISTS Categorias CASCADE;
 CREATE TABLE Categorias (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL UNIQUE,
     descripcion TEXT,
     activo BOOLEAN DEFAULT TRUE
 );
--- 2. Tabla de Usuarios (independiente)
 CREATE TABLE Usuarios (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(150) NOT NULL,
@@ -17,7 +15,6 @@ CREATE TABLE Usuarios (
     rol VARCHAR(50) DEFAULT 'Estudiante',
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
--- 3. Tabla de Productos (dependiente de Categorias debido a Llave Foránea)
 CREATE TABLE Productos (
     id SERIAL PRIMARY KEY,
     categoria_id INT NOT NULL,
@@ -27,13 +24,8 @@ CREATE TABLE Productos (
     stock INT NOT NULL DEFAULT 0 CHECK (stock >= 0),
     sku VARCHAR(50) UNIQUE,
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    -- Restricción de Integridad Referencial con eliminación en Cascada
     CONSTRAINT fk_categoria FOREIGN KEY (categoria_id) REFERENCES Categorias(id) ON DELETE CASCADE
 );
--- =============================================================
--- PASO 6: INSERCIÓN DE DATOS DE PRUEBA (SEED DATA)
--- =============================================================
--- Insertar Categorías Base
 INSERT INTO Categorias (nombre, descripcion)
 VALUES (
         'Tecnología Verde',
@@ -43,7 +35,6 @@ VALUES (
         'Energía Renovable',
         'Paneles solares, inversores y almacenamiento de energía.'
     );
--- Insertar Usuario Administrador inicial
 INSERT INTO Usuarios (nombre, email, password_hash, rol)
 VALUES (
         'Coordinador EcoSystem',
@@ -51,7 +42,6 @@ VALUES (
         'AQAAAAIAAYagAAAAEG...',
         'Administrador'
     );
--- Insertar Producto inicial (Vinculado a la Categoría 1)
 INSERT INTO Productos (
         categoria_id,
         nombre,
